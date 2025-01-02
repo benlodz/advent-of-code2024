@@ -2,3 +2,5 @@
 *input.txt
 log.txt
 build
+__pycache__
+input
