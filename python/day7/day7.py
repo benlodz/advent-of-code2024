@@ -32,7 +32,7 @@ def get_args(desc: str, day: str) -> str:
 
 def get_input(file_path: str) -> list[str]:
     with open(file_path, "r") as f:
-        lines = f.read().splitlines()
+        lines: list[str] = f.read().splitlines()
         f.close()
     return lines
 
@@ -58,19 +58,12 @@ def concat_operation_int(x: int, y: int) -> int:
     return x + y
 
 
-def process_lines(lines: list[str]) -> list[list[int]]:
-    """
-    In this problem our input is given in the form of:
-    190: 10 19
+def process_lines(lines: list[str]) -> list[array.array]:
 
-    We process these lines and put them into a list.
-    Where the first index represents the target and the rest is the equation
-    """
-
-    equations = []
+    equations: list[array.array] = []
     for line in lines:
-        equation = []
-        split_idx = line.find(":")
+        equation: array.array = array.array("Q")
+        split_idx: int = line.find(":")
         # target is the first idx
         equation.append(int(line[:split_idx]))
         # extend by the rest of the input
@@ -80,7 +73,7 @@ def process_lines(lines: list[str]) -> list[list[int]]:
     return equations
 
 
-def is_valid_equation_v1(target: int, equation: list[int]) -> bool:
+def is_valid_equation(target: int, equation: array.array) -> bool:
     """
     This is the Dynamic programming solution used to solve part 1.
     We return a 1 if we found a path that reaches our target.
@@ -116,7 +109,7 @@ def is_valid_equation_v1(target: int, equation: list[int]) -> bool:
     return dfs(0, 0)
 
 
-def is_valid_equation_v2(target: int, equation: list[int]) -> bool:
+def is_valid_equation_with_concat(target: int, equation: array.array) -> bool:
     """
     The difference here is that we now have a third split in our decision tree
     Making the recursive solution O(3^n).
@@ -158,7 +151,7 @@ def is_valid_equation_v2(target: int, equation: list[int]) -> bool:
     return dfs(0, 0)
 
 
-def get_valid_equation_cnt_v1(equations: list[list[int]]) -> tuple[int, set[int]]:
+def get_valid_equation_cnt(equations: list[array.array]) -> tuple[int, int]:
     """
     This solves part 1 of day 7. This will iterate over the input
     and return both the count and the index's in which it's valid.
@@ -170,40 +163,22 @@ def get_valid_equation_cnt_v1(equations: list[list[int]]) -> tuple[int, set[int]
     """
 
     valid_equation_total: int = 0
+    valid_concat_equation_total: int = 0
 
-    # this variable will save us calculations for part 2
-    valid_indices: set = set()
-    for i, equation in enumerate(equations):
+    for equation in equations:
         logger.debug(f"Examining this equation: {equation}")
 
         # 0 idx is the target, the rest is the equation.
-        if is_valid_equation_v1(equation[0], equation[1:]):
+        if is_valid_equation(equation[0], equation[1:]):
+            logger.debug("Equation was valid with just two operators.")
             valid_equation_total += equation[0]
-            valid_indices.add(i)
+        elif is_valid_equation_with_concat(equation[0], equation[1:]):
+            logger.debug("Equation was valid with concat operator.")
+            valid_concat_equation_total += equation[0]
+        else:
+            logger.debug("No way to make this equation valid with given operators.")
 
-    return (valid_equation_total, valid_indices)
-
-
-def get_valid_equation_cnt_v2(
-    equations: list[list[int]], valid_indices: set[int]
-) -> int:
-    """
-    This is for part 2 where now we include the third operation.
-    Otherwise, it works pretty much the same.
-    """
-
-    logger.debug("Determining the total sum with concat operation.")
-    valid_equation_total: int = 0
-    for i, equation in enumerate(equations):
-        if i in valid_indices:
-            continue
-        logger.debug(f"Examining this equation: {equation}")
-        target = equation[0]
-        if is_valid_equation_v2(target, equation[1:]):
-            logger.debug("This equation was valid")
-            valid_equation_total += target
-
-    return valid_equation_total
+    return (valid_equation_total, valid_concat_equation_total)
 
 
 def main():
@@ -214,17 +189,15 @@ def main():
 
     # this is how you unpack tuples with type annotations
     valid_equations_sum: int
-    valid_indices: set
-    valid_equations_sum, valid_indices = get_valid_equation_cnt_v1(equations)
+    valid_equations_sum_with_concat: int
+    valid_equations_sum, valid_equations_sum_with_concat = get_valid_equation_cnt(
+        equations
+    )
 
     print(f"The sum of all valid equations for part 1 is: {valid_equations_sum}")
 
-    valid_equations_total_with_concat: int = get_valid_equation_cnt_v2(
-        equations, valid_indices
-    )
-
     print(
-        f"The sum of valid equations with concat operations is: {valid_equations_sum + valid_equations_total_with_concat}"
+        f"The sum of valid equations with concat operations is: {valid_equations_sum + valid_equations_sum_with_concat}"
     )
 
 
