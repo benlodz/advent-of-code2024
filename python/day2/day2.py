@@ -184,18 +184,17 @@ def main():
         if is_valid_report_v2(report, greater) or is_valid_report_v2(report, lesser):
             valid_reports_part_2 += 1
 
-
     print(f"Part 2 valid reports: {valid_reports_part_2}")
 
     print("Testing new function")
-    
+
     valid_reports_part_3 = 0
     for report in reports:
         if is_valid_report_v3(report, greater) or is_valid_report_v3(report, lesser):
             valid_reports_part_3 += 1
-    
+
     print(f"v3 function returned: {valid_reports_part_3}")
 
 
-
-main()
+if __name__ == "__main__":
+    main()

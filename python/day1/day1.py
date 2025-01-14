@@ -32,10 +32,17 @@ for n in l1:
 print(f"Similarity Score: {sim_score}")
 
 
+def get_similarity_score() -> int:
+    pass
 
 
+def get_distance() -> int:
+    pass
 
 
+def main():
+    pass
 
-    
 
+if __name__ == "__main__":
+    main()

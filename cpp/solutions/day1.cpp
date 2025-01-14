@@ -78,14 +78,15 @@ s32 getSimilarity(std::pair<std::vector<s32>, std::vector<s32>> &lists) {
   return score;
 }
 
-s32 main(int argc, char *argv[]) {
-  auto file_path = parse_arguments(
-      "day1", "This program solves day 1 problem for the Advent of Code 2024.",
-      argc, argv);
+void day1_solve(const std::string file_path) {
+  logger = getLogger("Day 1 Logger");
+
   auto lines = getLines(file_path.c_str());
   auto lists = getLists(lines);
 
   auto distance = getDistance(lists);
+  logger->info("The distance score between the two lists is: {}", distance);
   auto similarity_score = getSimilarity(lists);
-  return 0;
+  logger->info("The similarity score calculated between the two lists is: {}",
+               similarity_score);
 }

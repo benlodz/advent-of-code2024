@@ -240,18 +240,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-"""
-sample_anti_node_locations = (
-    (0, 6), valid
-    (0, 11), valid
-    (1, 3), valid
-    (2, 4), didn't find
-    (2, 10) valid
-    (3, 2) valid found
-    (4, 9) valid found
-    (5, 6) valid found
-)
-
-0, 11 is missing
-"""
