@@ -1,6 +1,8 @@
 from typing import Callable
 import argparse
 import copy
+from pathlib import Path
+from .common import *
 
 
 def is_valid_report_v1(report: list[int], comparison: Callable) -> bool:
@@ -32,10 +34,36 @@ def is_valid_report_v1(report: list[int], comparison: Callable) -> bool:
     return True
 
 
+def get_valid_report_cnt_v1(reports: list[list[int]]) -> int:
+
+    cnt: int = 0
+    for report in reports:
+        if is_valid_report_v1(report, greater) or is_valid_report_v1(report, lesser):
+            cnt += 1
+    return cnt
+
+
+def get_valid_report_cnt_v2(reports: list[list[int]]) -> int:
+
+    cnt: int = 0
+    for report in reports:
+        if is_valid_report_v2(report, greater) or is_valid_report_v2(report, lesser):
+            cnt += 1
+    return cnt
+
+
+def get_valid_report_cnt_v3(reports: list[list[int]]) -> int:
+    cnt: int = 0
+    for report in reports:
+        if is_valid_report_v3(report, greater) or is_valid_report_v3(report, lesser):
+            cnt += 1
+    return cnt
+
+
 def is_valid_report_v2(report: list[int], comparison: Callable):
     """
     In this scenario, we can tolerate one bad level.
-    If a bad level is encountered,
+    If a bad level is encountered.
 
     Example:
       i j
@@ -148,15 +176,12 @@ def get_args():
     return args.input if args.input else "day2_input.txt"
 
 
-def get_reports(file_path: str) -> list[int]:
-    with open(file_path, "r") as f:
-        lines = f.read().splitlines()
-
-    reports = []
-    for line in lines:
-        reports.append([int(n) for n in line.split(" ")])
-
-    return reports
+def get_reports(lines: list[str]) -> list[list[int]]:
+    """
+    Lines come in the format of: "1, 2, 3, 4.."
+    returns a list of these lines converted to a list of ints
+    """
+    return [[int(n) for n in line.split(" ")] for line in lines]
 
 
 def greater(x: int, y: int) -> bool:
@@ -168,32 +193,19 @@ def lesser(x: int, y: int) -> bool:
 
 
 def main():
+    # TODO standalone
+    pass
 
-    file_path = get_args()
-    reports = get_reports(file_path)
 
-    valid_reports_part_1 = 0
-    for report in reports:
-        if is_valid_report_v1(report, greater) or is_valid_report_v1(report, lesser):
-            valid_reports_part_1 += 1
+def solve(file_path: Path) -> None:
+    lines: list[str] = read_file(file_path)
+    reports: list[list[int]] = get_reports(lines)
 
-    print(f"Part 1 valid reports: {valid_reports_part_1}")
+    valid_reports_part_1: int = get_valid_report_cnt_v1(reports)
+    print(f"For part 1, the count of valid reports is: {valid_reports_part_1}")
 
-    valid_reports_part_2 = 0
-    for report in reports:
-        if is_valid_report_v2(report, greater) or is_valid_report_v2(report, lesser):
-            valid_reports_part_2 += 1
-
-    print(f"Part 2 valid reports: {valid_reports_part_2}")
-
-    print("Testing new function")
-
-    valid_reports_part_3 = 0
-    for report in reports:
-        if is_valid_report_v3(report, greater) or is_valid_report_v3(report, lesser):
-            valid_reports_part_3 += 1
-
-    print(f"v3 function returned: {valid_reports_part_3}")
+    valid_reports_part_2: int = get_valid_report_cnt_v3(reports)
+    print(f"For part 2, the count of valid reports is: {valid_reports_part_2}")
 
 
 if __name__ == "__main__":

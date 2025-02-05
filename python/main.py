@@ -8,7 +8,7 @@ import importlib
 logger: logging.Logger
 
 # limit for how many days
-DAYS: int = 1
+DAYS: int = 2
 
 
 def get_args() -> None:
@@ -139,7 +139,8 @@ def solve_day(day: int, input_path: Path) -> None:
 def main():
     args = get_args()
 
-    solve_day(1, args)
+    for day in range(1, DAYS + 1):
+        solve_day(day, args)
 
 
 if __name__ == "__main__":

@@ -63,7 +63,9 @@ def solve(file_path: Path) -> None:
 
 
 def main():
-    print(DIRECTIONS_4D)
+    # running stand alone
+    # TODO
+    pass
 
 
 if __name__ == "__main__":
