@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <argparse/argparse.hpp>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -17,6 +18,7 @@
 #include <utility>
 #include <vector>
 #include <regex>
+#include <functional>
 // clang-format on
 
 using u8 = std::uint8_t;
@@ -32,17 +34,20 @@ using s64 = std::int64_t;
 
 std::shared_ptr<spdlog::logger> logger;
 
-std::shared_ptr<spdlog::logger> getLogger(const std::string &name) {
+std::shared_ptr<spdlog::logger> getLogger(const std::string& name) {
   auto logger = spdlog::stdout_color_mt(name);
   return logger;
 }
 
-std::vector<std::string> getLines(const char *file_path) {
+std::vector<std::string> getLines(const std::string& file_name) {
   using namespace std;
 
   ifstream file;
   vector<string> lines;
   string line;
+
+  // We need to expose the pointer for this to work properly.
+  const char* file_path = file_name.c_str();
 
   // Error handling.
   file.exceptions(ifstream::badbit | ifstream::failbit);

@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 from functools import reduce
 from collections import Counter, defaultdict, deque
+from typing import List, Union, Tuple
 import copy
 
 # Global error logger
@@ -62,3 +63,37 @@ def read_file(file_path: Path) -> list[str]:
     if lines is None:
         raise ValueError("Failed to get lines?")
     return lines
+
+
+def quick_parse(day: str) -> Tuple[str, int]:
+    """
+    If you want to use a module standalone,
+    this provides standalone commandline for it.
+
+    Mostly used for development
+    """
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input",
+        "-i",
+        type=str,
+    )
+    parser.add_argument(
+        "--debug", "-d", help="Turns on debugging statements.", action="store_true"
+    )
+    args: argparse.Namespace = parser.parse_args()
+
+    logging_level = logging.DEBUG if args.debug else logging.INFO
+
+    return (args.input if args.input else (day + "_sample.txt"), logging_level)
+
+
+def get_logger(name: str, level: int) -> logging.Logger:
+    # logger setup
+    logger = logging.getLogger(name)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(level)
+    return logger
