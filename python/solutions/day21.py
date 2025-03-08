@@ -6,10 +6,11 @@ import logging
 import heapq
 import copy
 from itertools import product
+from functools import cache
 import re
 
 
-def solve_pad(pad: Tuple[Tuple[str]], target: str) -> str:
+def solve_pad(pad: Tuple[Tuple[str]]) -> List[str]:
     """
     keypad looks like this:
     7, 8, 9
@@ -88,19 +89,21 @@ def solve_pad(pad: Tuple[Tuple[str]], target: str) -> str:
     # logger.debug(seqs)
     # now we find to make all possible shortest insertions
     # options = [seqs[(x, y)] for x, y in zip("A" + target, target)]
+    return seqs
+
+
+def get_input(seqs, target):
     options = []
     for x, y in zip("A" + target, target):
         options.append(seqs[(x, y)])
-    logger.debug(options)
-    possible_seqs = ["".join(x) for x in product(*options)]
-    print(possible_seqs)
-    return ""
+    # logger.debug(options)
+    input_strs = ["".join(x) for x in product(*options)]
+    return input_strs
 
 
 def get_total_complexity(lines: List[List[str]]) -> int:
 
     global logger
-    pattern = re.compile(r"\d+?(?=0*$)")
     codes = lines  # virtually the same
 
     logger.debug(f"codes found:{codes}")
@@ -109,16 +112,41 @@ def get_total_complexity(lines: List[List[str]]) -> int:
 
     direction_pad = ((None, "^", "A"), ("<", "V", ">"))
 
+    # get shortest paths for keypad
+    keypad_seqs = solve_pad(keypad)
+    # get shortest paths for direction pad
+    direction_seqs = solve_pad(direction_pad)
+
+    # this tells us the min length
+    direction_length = {pair: len(v[0]) for pair, v in direction_seqs.items()}
+
+    @cache
+    def dfs(seq, depth):
+        logger.debug(f"Entering with seq:{seq}, depth:{depth}")
+        # base case / first robot
+        if depth == 1:
+            return sum([direction_length[(x, y)] for x, y in zip("A" + seq, seq)])
+        length = 0
+        # to get subsequence
+        for x, y in zip("A" + seq, seq):
+            length += min(
+                [dfs(sub_seq, depth - 1) for sub_seq in direction_seqs[(x, y)]]
+            )
+        logger.debug(f"seq:{seq}, min length: {length}, depth: {depth}")
+        return length
+
     complexity_score = 0
     for code in codes:
-        keypad_codes = solve_pad(keypad, code)  # gets insertion for shortest
-        """
-        robot1_codes = get_robot(shortest_keypad_path)
-        robot2_codes = get_human(shortest_robot_path)
 
-        code = pattern.match(code).group(0)
-        complexity_score += len(shortest_human_path) * code
-        """
+        targets = get_input(keypad_seqs, code)
+        shortest_length = float("inf")
+        for target in targets:
+            shortest_length = min(shortest_length, dfs(target, 25))
+        n_code = int(code[:3])
+        logger.debug(f"n code:{n_code}")
+        # logger.debug(f"Length of shortest sequence: {short_code}")
+
+        complexity_score += shortest_length * n_code
 
     return complexity_score
 
@@ -127,7 +155,8 @@ def solve(file_path: Path, logging_level: int) -> None:
     global logger
     lines = read_file(file_path)
 
-    get_total_complexity(lines)
+    complexity = get_total_complexity(lines)
+    print(complexity)
 
 
 def main():
