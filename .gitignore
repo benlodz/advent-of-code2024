@@ -5,3 +5,4 @@ build
 __pycache__
 input
 .mypy_cache
+*notes.txt
