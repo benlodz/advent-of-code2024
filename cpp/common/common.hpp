@@ -4,6 +4,7 @@
 // clang-format off
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/fmt/ranges.h>
 
 #include <algorithm>
 #include <argparse/argparse.hpp>
@@ -32,14 +33,15 @@ using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-std::shared_ptr<spdlog::logger> logger;
-
-std::shared_ptr<spdlog::logger> getLogger(const std::string& name) {
+inline std::shared_ptr<spdlog::logger> getLogger(const std::string& name,
+                                                 bool debug) {
   auto logger = spdlog::stdout_color_mt(name);
+
+  if (debug) logger->set_level(spdlog::level::debug);
   return logger;
 }
 
-std::vector<std::string> getLines(const std::string& file_name) {
+inline std::vector<std::string> getLines(const std::string& file_name) {
   using namespace std;
 
   ifstream file;
@@ -63,5 +65,9 @@ std::vector<std::string> getLines(const std::string& file_name) {
 
   return lines;
 }
+
+// Forward declare of all solve functions.
+void day1_solve(const std::string& file_path, bool debug);
+void day2_solve(const std::string& file_path, bool debug);
 
 #endif

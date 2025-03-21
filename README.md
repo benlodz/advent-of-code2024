@@ -4,9 +4,9 @@
 
 This repository contains all my solutions for the Advent of Code 2024. You will find both solutions written in Python and C++.
 
-This repo is currently is in a work in-progress. As of writing this, this repo has solutions up to day 14 in Python and only the first day for C++.
+This repo is currently is in a work in-progress. Currently, all days have a solution written in Python. I am porting my code into C++.
 
-Both the Python and the C++ folders have a command line interface to see all expected results from both your own given inputs and samples from AoC. You can specify a day on the command or run each solution standalone will a similar interface.
+Both the Python and the C++ folders have a command line interface to see all expected results from both your own given inputs and samples from AoC. You can specify a day in the CLI or run each solution standalone will a similar interface.
 
 Lastly, there is a folder called editorials, that contains more detailed explanations for a given day. You can also find these markdown files on my [website](https://www.benlodz.com)
 

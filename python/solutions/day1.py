@@ -3,6 +3,10 @@ from collections import Counter
 from heapq import *
 import copy
 from pathlib import Path
+import logging
+
+logger: logging.Logger
+DAY: str = "day1"
 
 
 def get_similarity_score(lists: tuple[list, list]) -> int:
@@ -50,7 +54,9 @@ def get_lists(lines: list[str]) -> tuple[list, list]:
     return (l1, l2)
 
 
-def solve(file_path: Path) -> None:
+def solve(file_path: Path, logging_level: int) -> None:
+    global logger
+    logger = get_logger(DAY, logging_level)
     lines: list[str] = read_file(file_path)
 
     lists: tuple[list, list] = get_lists(lines)
@@ -58,14 +64,14 @@ def solve(file_path: Path) -> None:
     distance: int = get_distance(lists)
     similarity_score: int = get_similarity_score(lists)
 
-    print("For part 1, the distance score is: ", distance)
-    print("For part 2, the similarity score is: ", similarity_score)
+    logger.info(f"For part 1, the distance score is: {distance}.")
+    logger.info(f"For part 2, the similarity score is: {similarity_score}.")
 
 
-def main():
-    # running stand alone
-    # TODO
-    pass
+def main() -> None:
+    file_path: str
+    file_path, logging_level = quick_parse(DAY)
+    solve(Path(file_path), logging_level)
 
 
 if __name__ == "__main__":

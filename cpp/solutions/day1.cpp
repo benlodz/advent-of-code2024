@@ -2,10 +2,6 @@
 
 std::pair<std::vector<s32>, std::vector<s32>> getLists(
     std::vector<std::string> &lines) {
-  // In order to solve day 1's problems, we need to split the input file s32o
-  // two separate lists. Our lists are just numbers so we can go ahead and
-  // create an array of numbers for every list.
-
   std::vector<s32> l1(lines.size());
   std::vector<s32> l2(lines.size());
 
@@ -27,20 +23,9 @@ std::pair<std::vector<s32>, std::vector<s32>> getLists(
 }
 
 s32 getDistance(const std::pair<std::vector<s32>, std::vector<s32>> &lists) {
-  // In the first part of the problem, we need to take the smallest possible
-  // number from both lists, and then calculate the distance between them.
-  //
-  // Example:
-  // 3   4
-  // 4   3
-  // 2   5
-  // 1   3
-  // 3   9
-  // 3   3
-  // In this scenario, we would take 1 from the first list and take 3 from the
-  // second. The distance between them would be |1 - 3| = 2. We then repeat
-  // this process. This is easily done by using a min-heap and then popping
-  // from both of them.
+  // Distance is calculated as absolute value of the difference
+  // of the smallest values, so we just pop from the heap with our
+  // formula.
 
   std::priority_queue<s32, std::vector<s32>, std::greater<s32>> h1;
   std::priority_queue<s32, std::vector<s32>, std::greater<s32>> h2;
@@ -73,13 +58,13 @@ s32 getSimilarity(std::pair<std::vector<s32>, std::vector<s32>> &lists) {
   }
   s32 score{};
   for (const auto n1 : lists.first) {
-    score += cnt[n1];
+    score += (cnt[n1] * n1);
   }
   return score;
 }
 
-void day1_solve(const std::string file_path) {
-  logger = getLogger("Day 1 Logger");
+void day1_solve(const std::string &file_path, bool debug) {
+  auto logger = getLogger("Day 1", debug);
 
   auto lines = getLines(file_path.c_str());
   auto lists = getLists(lines);

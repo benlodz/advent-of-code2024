@@ -93,7 +93,7 @@ def get_logger(name: str, level: int) -> logging.Logger:
     logger = logging.getLogger(name)
     handler = logging.StreamHandler()
     log_handler = logging.FileHandler("log.txt", mode="w")
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(name)s - %(message)s")
     handler.setFormatter(formatter)
     log_handler.setFormatter(formatter)
     logger.addHandler(handler)

@@ -3,10 +3,6 @@ from typing import List, Tuple, Set, Dict, Deque, DefaultDict, Union
 from pathlib import Path
 from collections import deque, defaultdict
 import logging
-import heapq
-import copy
-from itertools import product
-from functools import cache
 import re
 from math import floor
 
@@ -125,7 +121,9 @@ def solve(file_path: Path, logging_level: int) -> None:
     logger.info(
         f"For part 1, the sum of secret numbers up to day 2000 is: {secret_numbers_sum}"
     )
-    print(get_max_bananas(secret_numbers, 2000))
+
+    max_bananas: int = get_max_bananas(secret_numbers, 2000)
+    logger.info(f"For part 2, the maximum amount of bananas you can get is: {max_bananas}")
 
 
 def main():

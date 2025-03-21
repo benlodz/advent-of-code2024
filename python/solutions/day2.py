@@ -4,6 +4,9 @@ import copy
 from pathlib import Path
 from .common import *
 
+logger: logging.Logger
+DAY: str = "day2"
+
 
 def is_valid_report_v1(report: list[int], comparison: Callable) -> bool:
     """
@@ -163,19 +166,6 @@ def is_valid_report_v3(report: list[int], comparison: Callable):
     return True
 
 
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input",
-        "-i",
-        help="Solves part 1 and part 2 for Advent of Code 2024, day 2.",
-        type=str,
-    )
-    args = parser.parse_args()
-
-    return args.input if args.input else "day2_input.txt"
-
-
 def get_reports(lines: list[str]) -> list[list[int]]:
     """
     Lines come in the format of: "1, 2, 3, 4.."
@@ -184,28 +174,28 @@ def get_reports(lines: list[str]) -> list[list[int]]:
     return [[int(n) for n in line.split(" ")] for line in lines]
 
 
-def greater(x: int, y: int) -> bool:
-    return x > y
-
-
-def lesser(x: int, y: int) -> bool:
-    return x < y
+greater: Callable = lambda x, y: x > y
+lesser: Callable = lambda x, y: x < y
 
 
 def main():
-    # TODO standalone
-    pass
+    file_path: str
+    file_path, logging_level = quick_parse(DAY)
+    solve(Path(file_path), logging_level)
 
 
-def solve(file_path: Path) -> None:
+def solve(file_path: Path, logging_level: int) -> None:
+    global logger
+    logger = get_logger(DAY, logging_level)
+
     lines: list[str] = read_file(file_path)
     reports: list[list[int]] = get_reports(lines)
 
     valid_reports_part_1: int = get_valid_report_cnt_v1(reports)
-    print(f"For part 1, the count of valid reports is: {valid_reports_part_1}")
+    logger.info(f"For part 1, the count of valid reports is: {valid_reports_part_1}.")
 
     valid_reports_part_2: int = get_valid_report_cnt_v3(reports)
-    print(f"For part 2, the count of valid reports is: {valid_reports_part_2}")
+    logger.info(f"For part 2, the count of valid reports is: {valid_reports_part_2}.")
 
 
 if __name__ == "__main__":

@@ -1,25 +1,28 @@
+// #include <fmt/format.h>
+
 #include <common/common.hpp>
 #include <filesystem>
+#include <tuple>
 
-std::pair<std::string, std::string> getSampleAndInput() {
+std::pair<std::filesystem::path, std::filesystem::path> getSampleAndInput() {
+  namespace fs = std::filesystem;
   using std::string;
-  string current_path = std::filesystem::current_path();
-  logger->debug("Found running path: {}", current_path);
 
-  string suffix = "/cpp/main.cpp";
-  string root_path =
-      current_path.substr(0, current_path.size() - suffix.size());
+  fs::path current_path = std::filesystem::current_path();
 
-  logger->debug("Root Path: {}", root_path);
+  // This assumes you run from cpp/build directory
+  // TODO: Maybe run a check that this is the correct path?
+  current_path = current_path.parent_path().parent_path();
+  auto input_path = current_path / "input";
+  auto sample_path = current_path / "sample";
 
-  string input_path = root_path + "/input";
-  string sample_path = root_path + "/sample";
-  logger->debug("Input path: {}\nSample path: {}", input_path, sample_path);
-  return std::pair<std::string, std::string>(input_path, sample_path);
+  return std::pair<fs::path, fs::path>(input_path, sample_path);
 }
-std::string parse_arguments(s32 argc, char *argv[]) {
+
+std::tuple<std::string, bool, bool> parse_arguments(s32 argc, char *argv[]) {
   using std::pair;
   using std::string;
+  using std::tuple;
 
   argparse::ArgumentParser parser("AoC 2024: C++ Edition");
 
@@ -38,18 +41,39 @@ std::string parse_arguments(s32 argc, char *argv[]) {
       .help("Specify whether to turn on debugging. Off by default")
       .flag();
 
+  parser.add_argument("-s", "--samples")
+      .help("Specify whether to turn on debugging. Off by default")
+      .flag();
+
   try {
     parser.parse_args(argc, argv);
   } catch (const std::exception &err) {
-    logger->critical("An error occurred while parsing arguments: {}",
-                     err.what());
-    throw;
+    std::cerr << "Caught exception when trying to parse args: " << err.what()
+              << std::endl;
+    throw std::runtime_error("Failed to parse arguments!");
   }
 
-  
+  std::string input_path = parser.get<std::string>("--input");
+  bool debug = parser.get<bool>("--debug");
+  bool samples = parser.get<bool>("--samples");
+  return std::tuple(input_path, debug, samples);
+}
 
-  std::string input = parser.get<std::string>("--input");
-  return input;
+std::filesystem::path get_full_path(std::filesystem::path input_path, s8 day,
+                                    bool samples) {
+  return (input_path / ("day" + std::to_string(day) + "_input.txt"));
 }
 
 int main(int argc, char *argv[]) {
+  auto [input_path, debug, samples] = parse_arguments(argc, argv);
+  auto logger = getLogger("MAIN", debug);
+
+  if (debug) logger->debug("Debugging is on!");
+  if (samples) logger->debug("Running samples!");
+  logger->debug("Input path: {}", input_path);
+
+  // C++ doesn't support introspection so we have to call each function.
+  day1_solve(get_full_path(input_path, 1, false), debug);
+  day2_solve(get_full_path(input_path, 2, false), debug);
+  return 0;
+}
