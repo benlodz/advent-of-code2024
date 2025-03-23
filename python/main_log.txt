@@ -1,0 +1,9 @@
+INFO - Solving Day 1
+INFO - **********
+DEBUG - This is the path to the input file: /home/izanagi/code/advent_2024/input/day1_input.txt
+INFO - Solving Day 2
+INFO - **********
+DEBUG - This is the path to the input file: /home/izanagi/code/advent_2024/input/day2_input.txt
+INFO - Solving Day 3
+INFO - **********
+DEBUG - This is the path to the input file: /home/izanagi/code/advent_2024/input/day3_input.txt

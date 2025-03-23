@@ -18,21 +18,23 @@ def process_line(line: str) -> str:
 
     line_parts = []
 
+    # these offsets are created based on the length of the do() and dont() command.
     dont_offset = 7
     do_offset = 4
     start = 0
     enabled = True
     for i, c in enumerate(line):
+        # Adds everything up to the don't() call
         if c == "d" and enabled and line[i : i + dont_offset] == "don't()":
             line_parts.append(line[start:i])
+            logger.debug(f"Adding {line_parts[-1]}")
             enabled = False
+        # Renables from do()
         elif c == "d" and not enabled and line[i : i + do_offset] == "do()":
             enabled = True
             start = i
 
-    if enabled:
-        line_parts.append(line[start:])
-
+    # returns flattened string
     return "".join(line_parts)
 
 

@@ -2,8 +2,10 @@
 #define COMMON_H
 
 // clang-format off
+#include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/fmt/ranges.h>
 
 #include <algorithm>
@@ -13,6 +15,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <queue>
 #include <sstream>
 #include <string>
@@ -35,9 +38,19 @@ using s64 = std::int64_t;
 
 inline std::shared_ptr<spdlog::logger> getLogger(const std::string& name,
                                                  bool debug) {
-  auto logger = spdlog::stdout_color_mt(name);
+  // console sink with color
+  auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+  auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
+      name + "_log.txt", false);
+  file_sink->set_level(spdlog::level::debug);
 
-  if (debug) logger->set_level(spdlog::level::debug);
+  auto logger = std::make_shared<spdlog::logger>(
+      name, spdlog::sinks_init_list{console_sink, file_sink});
+
+  if (debug) {
+    logger->set_level(spdlog::level::debug);
+  }
+
   return logger;
 }
 
@@ -69,5 +82,6 @@ inline std::vector<std::string> getLines(const std::string& file_name) {
 // Forward declare of all solve functions.
 void day1_solve(const std::string& file_path, bool debug);
 void day2_solve(const std::string& file_path, bool debug);
+void day3_solve(const std::string& file_path, bool debug);
 
 #endif

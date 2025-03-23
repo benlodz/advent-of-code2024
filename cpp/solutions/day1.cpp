@@ -1,5 +1,7 @@
 #include <common/common.hpp>
 
+static std::shared_ptr<spdlog::logger> logger;
+
 std::pair<std::vector<s32>, std::vector<s32>> getLists(
     std::vector<std::string> &lines) {
   std::vector<s32> l1(lines.size());
@@ -64,7 +66,7 @@ s32 getSimilarity(std::pair<std::vector<s32>, std::vector<s32>> &lists) {
 }
 
 void day1_solve(const std::string &file_path, bool debug) {
-  auto logger = getLogger("Day 1", debug);
+  logger = getLogger("Day 1", debug);
 
   auto lines = getLines(file_path.c_str());
   auto lists = getLists(lines);
